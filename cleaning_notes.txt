@@ -1,0 +1,46 @@
+OLIST E-COMMERCE ANALYSIS: DATA CHECKS AND DECISIONS
+
+Data: Brazilian E-Commerce Public Dataset by Olist (Kaggle), Sept 2016 to Oct 2018
+Tables used: orders, order_items, payments, reviews, customers, products, sellers, category_translation
+Table not used: geolocation (over a million rows of coordinates, not needed for the questions)
+
+Row counts after import (all matched the source files):
+- orders 99,441 | order_items 112,650 | payments 103,886 | reviews 99,224
+- customers 99,441 | products 32,951 | sellers 3,095 | category_translation 71
+
+CHECKS AND DECISIONS
+
+1. Order status
+   Finding: 96,478 of 99,441 orders are delivered (97%). The rest are shipped (1,107),
+   canceled (625), unavailable (609), invoiced (314), processing (301), created (5), approved (2).
+   Decision: revenue and delivery questions use delivered orders only.
+
+2. Date range
+   Finding: 4 Sep 2016 to 17 Oct 2018. Late 2016 has very few orders, and delivered orders
+   stop after August 2018.
+   Decision: trend statements cover January 2017 to August 2018 only.
+
+3. Missing delivery dates
+   Finding: 2,965 orders have no delivery date. 2,957 are not delivered (explained by status).
+   8 are marked delivered but have no date.
+   Decision: those 8 are left out of delivery-time and late-delivery figures.
+
+4. Repeated order IDs
+   Finding: none in orders. 551 extra rows in reviews (some orders have more than one review).
+   Decision: reviews reduced to one average score per order before joining.
+
+5. Customer identifiers
+   Finding: 99,441 customer_id values but only 96,096 real customers. customer_id changes
+   with every order; customer_unique_id identifies the person.
+   Decision: customers are counted using customer_unique_id.
+
+6. Products without a category
+   Finding: 610 products.
+   Decision: kept and labelled "unknown" so their sales stay in the totals.
+
+DEFINITIONS
+- Revenue = item price (order_items.price) for delivered orders, excluding freight.
+- Payments table is not used for revenue because it has one row per payment method and
+  its totals include freight.
+- Late delivery = delivered after the estimated delivery date.
+- Currency: Brazilian reais (R$).
